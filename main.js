@@ -19,20 +19,20 @@ let maleActData = [];
 
 // function to load in data from csvs
 async function loadData() {
-	const convertToNumber = (obj) => {
+    const convertToNumber = (obj) => {
         return Object.keys(obj).reduce((acc, key) => {
             acc[key] = Number(obj[key]);
             return acc;
         }, {});
     };
 
-// get csvs
+    // get csvs
     femaleTempData = await d3.csv('data/fem-temp-raw.csv');
     maleTempData = await d3.csv('data/male-temp-raw.csv');
     femaleActData = await d3.csv('data/fem-act-raw.csv');
     maleActData = await d3.csv('data/male-act-raw.csv')
-    
-// convert minutes from strings to numbers
+
+    // convert minutes from strings to numbers
     for (let row in femaleTempData) {
         femaleTempData[row] = convertToNumber(femaleTempData[row]);
     }
@@ -49,36 +49,36 @@ async function loadData() {
 
 // event listener to load data and generate plot on page load
 document.addEventListener('DOMContentLoaded', async () => {
-	await loadData();
+    await loadData();
     generatePlot();
 });
 
 // function to generate plot
 function generatePlot() {
-// TODO - adjust width and height for svg
+    // TODO - adjust width and height for svg
     const width = 500;
     const height = 400;
 
-// add svg element
+    // add svg element
     const svg = d3
         .select('#plot')
         .append('svg')
         .attr('viewBox', `0 0 ${width} ${height}`)
         .style('overflow', 'visible');
 
-// x-scale based on minutes
+    //changed x-scale from minutes to days
     const xScale = d3
         .scaleLinear()
-        .domain([0, femaleTempData.length])
+        .domain([0, femaleTempData.length / (720 * 2)])
         .range([0, width]);
 
-// y-scale based on temperature
+    // y-scale based on temperature
     const yScale = d3
         .scaleLinear()
         .domain([33, 41])
         .range([height, 0]);
-    
-// adding lines for each sample
+
+    // adding lines for each sample
     // svg.append('path')
     //     .attr('class', 'female')
     //     .datum(femaleTempData)
@@ -209,7 +209,7 @@ function generatePlot() {
     //         .x((d) => xScale(d.t))
     //         .y((d) => yScale(d.f13))
     //     );
-    
+
     // svg.append('path')
     //     .attr('class', 'male')
     //     .datum(maleTempData)
@@ -340,8 +340,8 @@ function generatePlot() {
     //         .x((d) => xScale(d.t))
     //         .y((d) => yScale(d.m13))
     //     ); 
-    
-// code to add axes and grid lines
+
+    // code to add axes and grid lines
     const margin = { top: 10, right: 10, bottom: 30, left: 20 };
 
     const usableArea = {
@@ -360,7 +360,7 @@ function generatePlot() {
         .append('g')
         .attr('class', 'gridlines')
         .attr('transform', `translate(${usableArea.left}, 0)`);
-    
+
     gridlines.call(d3.axisLeft(yScale).tickFormat('').tickSize(-usableArea.width));
 
     const xAxis = d3.axisBottom(xScale);
@@ -370,7 +370,7 @@ function generatePlot() {
         .append('g')
         .attr('transform', `translate(0, ${usableArea.bottom})`)
         .call(xAxis);
-    
+
     svg
         .append('g')
         .attr('transform', `translate(${usableArea.left}, 0)`)
