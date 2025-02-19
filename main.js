@@ -98,7 +98,7 @@ function createSampleToggles() {
             .attr('type', 'checkbox')
             .attr('value', sample)
             .property('checked', state.selectedFemaleSamples.has(sample))
-            .on('change', function() {
+            .on('change', function () {
                 const checked = this.checked;
                 if (checked) {
                     state.selectedFemaleSamples.add(sample);
@@ -124,7 +124,7 @@ function createSampleToggles() {
             .attr('type', 'checkbox')
             .attr('value', sample)
             .property('checked', state.selectedMaleSamples.has(sample))
-            .on('change', function() {
+            .on('change', function () {
                 const checked = this.checked;
                 if (checked) {
                     state.selectedMaleSamples.add(sample);
@@ -140,18 +140,18 @@ function createSampleToggles() {
     });
 
     // Time range inputs
-    d3.select('#time-start').on('change', function() {
+    d3.select('#time-start').on('change', function () {
         state.timeRange.start = this.value;
         render();
     });
 
-    d3.select('#time-end').on('change', function() {
+    d3.select('#time-end').on('change', function () {
         state.timeRange.end = this.value;
         render();
     });
 
     // Cycle filter buttons
-    d3.selectAll('.cycle-toggles button').on('click', function() {
+    d3.selectAll('.cycle-toggles button').on('click', function () {
         const id = this.id;
         state.cycleFilter = id.replace('-days', '');
         d3.selectAll('.cycle-toggles button').classed('active', false);
@@ -189,7 +189,7 @@ function render() {
     const yScale = d3.scaleLinear()
         .domain([33, 41])
         .range([height, 0]);
-    
+
     // Add gridlines
     svg.append('g')
         .attr('class', 'gridlines')
@@ -199,7 +199,7 @@ function render() {
 
     // Add axes
     const xAxis = d3.axisBottom(xScale)
-        .tickFormat(d => `Day ${Math.floor(d/1440) + 1}`)
+        .tickFormat(d => `Day ${Math.floor(d / 1440) + 1}`)
         .ticks(14);
 
     svg.append('g')
@@ -217,7 +217,7 @@ function render() {
     // Add axis labels
     svg.append('text')
         .attr('class', 'axis-label')
-        .attr('x', width/2)
+        .attr('x', width / 2)
         .attr('y', height + margin.bottom - 10)
         .style('text-anchor', 'middle')
         .text('Time (Days)');
@@ -225,7 +225,7 @@ function render() {
     svg.append('text')
         .attr('class', 'axis-label')
         .attr('transform', 'rotate(-90)')
-        .attr('x', -height/2)
+        .attr('x', -height / 2)
         .attr('y', -margin.left + 15)
         .style('text-anchor', 'middle')
         .text('Temperature (°C)');
@@ -268,7 +268,16 @@ function render() {
             .datum(data)
             .attr('class', 'line female-line')
             .attr('stroke', femaleColorScale(sample))
-            .attr('d', line);
+            .attr('d', line)
+            .transition()
+            .duration(1000)
+            .ease(d3.easeLinear)
+            .on('start', function () {
+                d3.select(this)
+                    .attr('stroke-dasharray', this.getTotalLength() + ' ' + this.getTotalLength())
+                    .attr('stroke-dashoffset', this.getTotalLength());
+            })
+            .attr('stroke-dashoffset', 0);
     });
 
     // Plot male data
@@ -295,16 +304,16 @@ function render() {
         .attr('height', height)
         .style('fill', 'none')
         .style('pointer-events', 'all')
-        .on('mousemove', function(event) {
+        .on('mousemove', function (event) {
             const mouseX = d3.pointer(event)[0];
             const x0 = xScale.invert(mouseX);
-            
-            const day = Math.floor(x0/1440) + 1;
+
+            const day = Math.floor(x0 / 1440) + 1;
             const timeOfDay = Math.floor((x0 % 1440) / 60);
             const minutes = Math.floor(x0 % 60);
 
             let tooltipContent = `Day ${day}, ${timeOfDay}:${minutes.toString().padStart(2, '0')}<br>`;
-            
+
             state.selectedFemaleSamples.forEach(sample => {
                 const idx = bisect(filteredFemaleData, x0);
                 if (idx < filteredFemaleData.length) {
@@ -325,7 +334,7 @@ function render() {
                 .style('top', `${event.clientY}px`)
                 .html(tooltipContent);
         })
-        .on('mouseout', function() {
+        .on('mouseout', function () {
             tooltip.style('display', 'none');
         });
 }

@@ -38,7 +38,7 @@ main {
     background: white;
     padding: clamp(1rem, 2vw, 2rem);
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .controls-sidebar {
@@ -51,7 +51,8 @@ main {
     display: flex;
     flex-direction: column;
     gap: clamp(1rem, 1.5vw, 1.5rem);
-    min-width: 0; /* Prevents flex child from overflowing */
+    min-width: 0;
+    /* Prevents flex child from overflowing */
 }
 
 .top-controls {
@@ -67,7 +68,8 @@ main {
     margin-bottom: 0;
 }
 
-.time-filters, .cycle-filters {
+.time-filters,
+.cycle-filters {
     flex: 1 1 250px;
 }
 
@@ -238,12 +240,13 @@ svg {
     main {
         grid-template-columns: 1fr;
     }
-    
+
     .control-group.horizontal {
         flex-direction: column;
     }
-    
-    .time-filters, .cycle-filters {
+
+    .time-filters,
+    .cycle-filters {
         width: 100%;
     }
 }
@@ -253,19 +256,19 @@ svg {
         max-width: 100%;
         padding: 1rem;
     }
-    
+
     .cycle-toggles {
         flex-direction: column;
     }
-    
+
     .cycle-toggles button {
         width: 100%;
     }
-    
+
     #plot-container {
         min-height: 40vh;
     }
-    
+
     svg {
         min-height: 40vh;
     }
@@ -275,12 +278,16 @@ svg {
     .time-range {
         flex-direction: column;
     }
-    
+
     #plot-container {
         min-height: 30vh;
     }
-    
+
     svg {
         min-height: 30vh;
     }
+}
+
+path {
+    transition: 300ms;
 }
