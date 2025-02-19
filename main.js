@@ -1,10 +1,23 @@
 
+/*
+TODO
+- Confirm plot specs
+    - axes - measures, scales, titles
+    - lines - number, colors
+    - legend 
+- Implement interaction (filtering, toggle, search)
+    - samples
+    - times of day
+    - estrus cycle
+*/
+
+// data arrays
 let femaleTempData = [];
 let maleTempData = [];
 let femaleActData = [];
 let maleActData = [];
-let dataArray = [];
 
+// function to load in data from csvs
 async function loadData() {
 	const convertToNumber = (obj) => {
         return Object.keys(obj).reduce((acc, key) => {
@@ -12,12 +25,14 @@ async function loadData() {
             return acc;
         }, {});
     };
-    
+
+// get csvs
     femaleTempData = await d3.csv('data/fem-temp-raw.csv');
     maleTempData = await d3.csv('data/male-temp-raw.csv');
     femaleActData = await d3.csv('data/fem-act-raw.csv');
     maleActData = await d3.csv('data/male-act-raw.csv')
     
+// convert minutes from strings to numbers
     for (let row in femaleTempData) {
         femaleTempData[row] = convertToNumber(femaleTempData[row]);
     }
@@ -30,324 +45,303 @@ async function loadData() {
     for (let row in maleActData) {
         maleActData[row] = convertToNumber(maleActData[row]);
     }
-
-    dataArray = [femaleTempData, maleTempData];
 }
 
+// event listener to load data and generate plot on page load
 document.addEventListener('DOMContentLoaded', async () => {
 	await loadData();
     generatePlot();
 });
 
-function updateTooltipContent(samp) {
-    const sex = document.getElementById('samp-sex');
-
-    // sex.textContent = samp.
-}
-function updateTooltipVisibility(isVisible) {
-    const tooltip = document.getElementById('commit-tooltip');
-    tooltip.hidden = !isVisible;
-}
-updateTooltipVisibility(false);
-function updateTooltipPosition(event) {
-    const tooltip = document.getElementById('commit-tooltip');
-    tooltip.style.left =   `${event.clientX + 13}px`;
-    tooltip.style.top =   `${event.clientY + 13}px`;
-}
-
+// function to generate plot
 function generatePlot() {
-    const width = 300;
-    const height = 300;
+// TODO - adjust width and height for svg
+    const width = 500;
+    const height = 400;
 
+// add svg element
     const svg = d3
         .select('#plot')
         .append('svg')
         .attr('viewBox', `0 0 ${width} ${height}`)
         .style('overflow', 'visible');
 
+// x-scale based on minutes
     const xScale = d3
         .scaleLinear()
         .domain([0, femaleTempData.length])
         .range([0, width]);
 
+// y-scale based on temperature
     const yScale = d3
         .scaleLinear()
-        .domain([32, 44])
+        .domain([33, 41])
         .range([height, 0]);
     
-    svg.append('path')
-        .attr('class', 'female')
-        .datum(femaleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'pink')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.f1))
-        );
-        // .on('mouseenter', function (event, samp) {
-        //     d3.select(event.currentTarget).style('fill-opacity', 1);
-        //     updateTooltipContent(samp);
-        //     updateTooltipVisibility(true);
-        //     updateTooltipPosition(event);
-        // })
-        // .on('mouseleave', function (event) {
-        //     d3.select(event.currentTarget).style('fill-opacity', 0.7);
-        //     updateTooltipContent({});
-        //     updateTooltipVisibility(false);
-        // });
-    svg.append('path')
-        .attr('class', 'female')
-        .datum(femaleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'red')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.f2))
-        );
-    svg.append('path')
-        .attr('class', 'female')
-        .datum(femaleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'orange')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.f3))
-        );
-    svg.append('path')
-        .attr('class', 'female')
-        .datum(femaleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'pink')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.f4))
-        );
-    svg.append('path')
-        .attr('class', 'female')
-        .datum(femaleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'red')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.f5))
-        );
-    svg.append('path')
-        .attr('class', 'female')
-        .datum(femaleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'orange')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.f6))
-        );
-    svg.append('path')
-        .attr('class', 'female')
-        .datum(femaleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'pink')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.f7))
-        );
-    svg.append('path')
-        .attr('class', 'female')
-        .datum(femaleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'red')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.f8))
-        );
-    svg.append('path')
-        .attr('class', 'female')
-        .datum(femaleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'orange')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.f9))
-        );
-    svg.append('path')
-        .attr('class', 'female')
-        .datum(femaleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'pink')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.f10))
-        );
-    svg.append('path')
-        .attr('class', 'female')
-        .datum(femaleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'red')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.f11))
-        );
-    svg.append('path')
-        .attr('class', 'female')
-        .datum(femaleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'orange')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.f12))
-        );
-    svg.append('path')
-        .attr('class', 'female')
-        .datum(femaleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'orange')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.f13))
-        );
+// adding lines for each sample
+    // svg.append('path')
+    //     .attr('class', 'female')
+    //     .datum(femaleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'pink')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.f1))
+    //     );   
+    // svg.append('path')
+    //     .attr('class', 'female')
+    //     .datum(femaleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'red')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.f2))
+    //     );
+    // svg.append('path')
+    //     .attr('class', 'female')
+    //     .datum(femaleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'orange')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.f3))
+    //     );
+    // svg.append('path')
+    //     .attr('class', 'female')
+    //     .datum(femaleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'pink')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.f4))
+    //     );
+    // svg.append('path')
+    //     .attr('class', 'female')
+    //     .datum(femaleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'red')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.f5))
+    //     );
+    // svg.append('path')
+    //     .attr('class', 'female')
+    //     .datum(femaleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'orange')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.f6))
+    //     );
+    // svg.append('path')
+    //     .attr('class', 'female')
+    //     .datum(femaleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'pink')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.f7))
+    //     );
+    // svg.append('path')
+    //     .attr('class', 'female')
+    //     .datum(femaleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'red')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.f8))
+    //     );
+    // svg.append('path')
+    //     .attr('class', 'female')
+    //     .datum(femaleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'orange')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.f9))
+    //     );
+    // svg.append('path')
+    //     .attr('class', 'female')
+    //     .datum(femaleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'pink')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.f10))
+    //     );
+    // svg.append('path')
+    //     .attr('class', 'female')
+    //     .datum(femaleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'red')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.f11))
+    //     );
+    // svg.append('path')
+    //     .attr('class', 'female')
+    //     .datum(femaleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'orange')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.f12))
+    //     );
+    // svg.append('path')
+    //     .attr('class', 'female')
+    //     .datum(femaleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'orange')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.f13))
+    //     );
     
-    svg.append('path')
-        .attr('class', 'male')
-        .datum(maleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'blue')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.m1))
-        );
-    svg.append('path')
-        .attr('class', 'male')
-        .datum(maleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'green')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.m2))
-        );
-    svg.append('path')
-        .attr('class', 'male')
-        .datum(maleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'purple')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.m3))
-        ); 
-    svg.append('path')
-        .attr('class', 'male')
-        .datum(maleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'blue')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.m4))
-        );
-    svg.append('path')
-        .attr('class', 'male')
-        .datum(maleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'green')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.m5))
-        );
-    svg.append('path')
-        .attr('class', 'male')
-        .datum(maleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'purple')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.m6))
-        ); 
-    svg.append('path')
-        .attr('class', 'male')
-        .datum(maleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'blue')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.m7))
-        );
-    svg.append('path')
-        .attr('class', 'male')
-        .datum(maleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'green')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.m8))
-        );
-    svg.append('path')
-        .attr('class', 'male')
-        .datum(maleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'purple')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.m9))
-        ); 
-    svg.append('path')
-        .attr('class', 'male')
-        .datum(maleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'blue')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.m10))
-        );
-    svg.append('path')
-        .attr('class', 'male')
-        .datum(maleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'green')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.m11))
-        );
-    svg.append('path')
-        .attr('class', 'male')
-        .datum(maleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'purple')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.m12))
-        ); 
-    svg.append('path')
-        .attr('class', 'male')
-        .datum(maleTempData)
-        .attr('fill', 'none')
-        .attr('stroke', 'purple')
-        .attr('stroke-width', 1.5)
-        .attr('d', d3.line()
-            .x((d) => xScale(d.t))
-            .y((d) => yScale(d.m13))
-        ); 
+    // svg.append('path')
+    //     .attr('class', 'male')
+    //     .datum(maleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'blue')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.m1))
+    //     );
+    // svg.append('path')
+    //     .attr('class', 'male')
+    //     .datum(maleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'green')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.m2))
+    //     );
+    // svg.append('path')
+    //     .attr('class', 'male')
+    //     .datum(maleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'purple')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.m3))
+    //     ); 
+    // svg.append('path')
+    //     .attr('class', 'male')
+    //     .datum(maleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'blue')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.m4))
+    //     );
+    // svg.append('path')
+    //     .attr('class', 'male')
+    //     .datum(maleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'green')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.m5))
+    //     );
+    // svg.append('path')
+    //     .attr('class', 'male')
+    //     .datum(maleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'purple')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.m6))
+    //     ); 
+    // svg.append('path')
+    //     .attr('class', 'male')
+    //     .datum(maleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'blue')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.m7))
+    //     );
+    // svg.append('path')
+    //     .attr('class', 'male')
+    //     .datum(maleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'green')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.m8))
+    //     );
+    // svg.append('path')
+    //     .attr('class', 'male')
+    //     .datum(maleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'purple')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.m9))
+    //     ); 
+    // svg.append('path')
+    //     .attr('class', 'male')
+    //     .datum(maleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'blue')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.m10))
+    //     );
+    // svg.append('path')
+    //     .attr('class', 'male')
+    //     .datum(maleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'green')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.m11))
+    //     );
+    // svg.append('path')
+    //     .attr('class', 'male')
+    //     .datum(maleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'purple')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.m12))
+    //     ); 
+    // svg.append('path')
+    //     .attr('class', 'male')
+    //     .datum(maleTempData)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'purple')
+    //     .attr('stroke-width', 1.5)
+    //     .attr('d', d3.line()
+    //         .x((d) => xScale(d.t))
+    //         .y((d) => yScale(d.m13))
+    //     ); 
     
+// code to add axes and grid lines
     const margin = { top: 10, right: 10, bottom: 30, left: 20 };
 
     const usableArea = {
