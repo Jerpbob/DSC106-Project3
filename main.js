@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 function generatePlot() {
     // TODO - adjust width and height for svg
     const width = 500;
-    const height = 400;
+    const height = 200;
 
     // add svg element
     const svg = d3
